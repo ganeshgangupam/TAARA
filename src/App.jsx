@@ -16,6 +16,7 @@ import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import Terms from '@/pages/Terms';
 import ReturnPolicy from '@/pages/ReturnPolicy';
 import { Toaster } from 'sonner';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const CustomerLayout = () => {
   return (
@@ -28,6 +29,7 @@ const CustomerLayout = () => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Customer Routes */}
         <Route element={<CustomerLayout />}>
