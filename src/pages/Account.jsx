@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Package, Heart, MapPin, Settings, HelpCircle, LogOut, ChevronRight, Edit2, Plus, Trash2 } from 'lucide-react';
+import { User, Package, Heart, MapPin, Settings, HelpCircle, LogOut, ChevronRight, ChevronLeft, Edit2, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { products } from '@/lib/data'; // Using existing product data for wishlist mock
+import { products } from '@/lib/data';
 
 // Mock Data
 const MOCK_ORDERS = [
@@ -24,10 +24,16 @@ const Account = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isMobileDetailView, setIsMobileDetailView] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setIsMobileDetailView(true);
   };
 
   const tabs = [
@@ -41,54 +47,109 @@ const Account = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans pt-8 pb-20">
+    <div className="min-h-screen bg-white font-sans pt-0 md:pt-8 pb-20">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         
-        <div className="flex flex-col md:flex-row gap-12">
-          {/* Sidebar Navigation */}
-          <aside className="w-full md:w-64 flex-shrink-0">
-            <div className="sticky top-24 space-y-8">
+        {/* Mobile View Logic */}
+        <div className="md:hidden">
+          {/* Mobile Menu List View */}
+          {!isMobileDetailView && (
+            <div className="space-y-6 pt-6">
+               <div className="flex items-center gap-4 mb-8">
+                 <div className="w-14 h-14 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center text-xl font-bold">
+                   {user?.name?.charAt(0) || 'U'}
+                 </div>
+                 <div>
+                   <h3 className="font-serif text-xl text-brand-charcoal font-bold">Hello, {user?.name || 'User'}</h3>
+                   <p className="text-sm text-gray-500">Welcome back to TAARA</p>
+                 </div>
+               </div>
+
+               <div className="space-y-2">
+                 {tabs.map(tab => (
+                   <button
+                     key={tab.id}
+                     onClick={() => handleTabChange(tab.id)}
+                     className="w-full flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:shadow-sm transition-all"
+                   >
+                     <div className="flex items-center gap-4">
+                       <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-500">
+                         <tab.icon className="w-5 h-5" />
+                       </div>
+                       <span className="font-medium text-brand-charcoal">{tab.label}</span>
+                     </div>
+                     <ChevronRight className="w-5 h-5 text-gray-300" />
+                   </button>
+                 ))}
+                 
+                 <button
+                   onClick={handleLogout}
+                   className="w-full flex items-center justify-between p-4 mt-6 bg-red-50/50 border border-red-100 rounded-xl hover:bg-red-50 transition-all"
+                 >
+                   <div className="flex items-center gap-4">
+                     <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-red-500">
+                       <LogOut className="w-5 h-5" />
+                     </div>
+                     <span className="font-medium text-red-600">Sign Out</span>
+                   </div>
+                 </button>
+               </div>
+            </div>
+          )}
+
+          {/* Mobile Detail Content View */}
+          {isMobileDetailView && (
+            <div className="pt-4">
+              <button 
+                onClick={() => setIsMobileDetailView(false)}
+                className="flex items-center gap-2 text-gray-500 hover:text-brand-charcoal mb-6 transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+                <span className="text-sm font-medium">Back to Menu</span>
+              </button>
+              
+              {/* Content will be rendered by the main content area logic below */}
+            </div>
+          )}
+        </div>
+
+        <div className={cn("flex flex-col md:flex-row gap-8 md:gap-12", !isMobileDetailView && "hidden md:flex")}>
+          {/* Desktop Sidebar Navigation */}
+          <aside className="hidden md:block w-64 flex-shrink-0">
+            <div className="sticky top-20 space-y-8">
               {/* User Brief */}
               <div className="flex items-center gap-4 px-2">
                 <div className="w-12 h-12 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center text-lg font-bold">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
                 <div>
-                  <h3 className="font-medium text-brand-charcoal">Hello, {user?.name || 'User'}</h3>
+                  <h3 className="font-medium text-brand-charcoal text-lg">Hello, {user?.name || 'User'}</h3>
                   <p className="text-xs text-gray-500">Welcome back</p>
                 </div>
               </div>
 
               {/* Navigation Menu */}
-              <nav className="flex md:flex-col overflow-x-auto md:overflow-visible pb-4 md:pb-0 gap-2 md:gap-0 md:space-y-1 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+              <nav className="flex flex-col gap-1">
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap flex-shrink-0",
+                      "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
                       activeTab === tab.id 
-                        ? "bg-gray-50 text-brand-charcoal ring-1 ring-gray-200 md:ring-0" 
-                        : "text-gray-500 hover:bg-gray-50 hover:text-brand-charcoal"
+                        ? "bg-gray-50 text-brand-charcoal ring-1 ring-gray-200" 
+                        : "text-gray-600 hover:bg-gray-50 hover:text-brand-charcoal"
                     )}
                   >
                     <tab.icon className={cn("w-4 h-4", activeTab === tab.id ? "text-brand-charcoal" : "text-gray-400")} />
                     {tab.label}
                   </button>
                 ))}
-                
-                <button
-                  onClick={handleLogout}
-                  className="md:hidden flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors whitespace-nowrap flex-shrink-0"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
-                </button>
               </nav>
 
               <button
                 onClick={handleLogout}
-                className="hidden md:flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors mt-4"
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors mt-4"
               >
                 <LogOut className="w-4 h-4" />
                 Sign Out
@@ -109,56 +170,65 @@ const Account = () => {
               >
                 {/* Content Renderers */}
                 {activeTab === 'overview' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div>
-                      <h1 className="text-3xl font-serif text-brand-charcoal mb-2">My Account</h1>
-                      <p className="text-gray-500">Manage your profile, orders, and preferences.</p>
+                      <h1 className="text-2xl md:text-3xl font-serif text-brand-charcoal mb-2">My Account</h1>
+                      <p className="text-sm md:text-base text-gray-500">Manage your profile, orders, and preferences.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6">
                       <div 
                         onClick={() => setActiveTab('orders')}
-                        className="p-6 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all cursor-pointer group"
+                        className="p-4 md:p-6 rounded-xl md:rounded-2xl border border-gray-100 bg-white shadow-sm md:shadow-none md:bg-gray-50/50 hover:bg-white hover:shadow-md transition-all cursor-pointer group flex items-center md:block gap-4 md:gap-0"
                       >
-                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 rounded-full bg-gray-50 md:bg-white flex items-center justify-center mb-0 md:mb-4 group-hover:scale-110 transition-transform">
                           <Package className="w-5 h-5 text-brand-charcoal" />
                         </div>
-                        <h3 className="font-medium text-brand-charcoal mb-1">Orders</h3>
-                        <p className="text-xs text-gray-500">Check order status</p>
+                        <div>
+                          <h3 className="font-medium text-brand-charcoal mb-0.5 md:mb-1">Orders</h3>
+                          <p className="text-xs text-gray-500">Check order status</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-300 ml-auto md:hidden" />
                       </div>
 
                       <div 
                         onClick={() => setActiveTab('wishlist')}
-                        className="p-6 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all cursor-pointer group"
+                        className="p-4 md:p-6 rounded-xl md:rounded-2xl border border-gray-100 bg-white shadow-sm md:shadow-none md:bg-gray-50/50 hover:bg-white hover:shadow-md transition-all cursor-pointer group flex items-center md:block gap-4 md:gap-0"
                       >
-                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 rounded-full bg-gray-50 md:bg-white flex items-center justify-center mb-0 md:mb-4 group-hover:scale-110 transition-transform">
                           <Heart className="w-5 h-5 text-brand-charcoal" />
                         </div>
-                        <h3 className="font-medium text-brand-charcoal mb-1">Wishlist</h3>
-                        <p className="text-xs text-gray-500">Your saved items</p>
+                        <div>
+                          <h3 className="font-medium text-brand-charcoal mb-0.5 md:mb-1">Wishlist</h3>
+                          <p className="text-xs text-gray-500">Your saved items</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-300 ml-auto md:hidden" />
                       </div>
 
                       <div 
                         onClick={() => setActiveTab('addresses')}
-                        className="p-6 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:shadow-md transition-all cursor-pointer group"
+                        className="p-4 md:p-6 rounded-xl md:rounded-2xl border border-gray-100 bg-white shadow-sm md:shadow-none md:bg-gray-50/50 hover:bg-white hover:shadow-md transition-all cursor-pointer group flex items-center md:block gap-4 md:gap-0"
                       >
-                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <div className="w-10 h-10 rounded-full bg-gray-50 md:bg-white flex items-center justify-center mb-0 md:mb-4 group-hover:scale-110 transition-transform">
                           <MapPin className="w-5 h-5 text-brand-charcoal" />
                         </div>
-                        <h3 className="font-medium text-brand-charcoal mb-1">Addresses</h3>
-                        <p className="text-xs text-gray-500">Manage delivery</p>
+                        <div>
+                          <h3 className="font-medium text-brand-charcoal mb-0.5 md:mb-1">Addresses</h3>
+                          <p className="text-xs text-gray-500">Manage delivery</p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-300 ml-auto md:hidden" />
                       </div>
                     </div>
 
                     {/* Recent Order Preview */}
-                    <div className="pt-8 border-t border-gray-100">
-                      <div className="flex justify-between items-center mb-6">
+                    <div className="pt-6 md:pt-8 border-t border-gray-100">
+                      <div className="flex justify-between items-center mb-4 md:mb-6">
                         <h2 className="text-lg font-bold text-brand-charcoal">Recent Orders</h2>
-                        <Button variant="link" onClick={() => setActiveTab('orders')} className="text-brand-primary">View All</Button>
+                        <Button variant="link" onClick={() => setActiveTab('orders')} className="text-brand-primary p-0 h-auto">View All</Button>
                       </div>
                       <div className="space-y-4">
                         {MOCK_ORDERS.slice(0, 1).map(order => (
-                          <div key={order.id} className="flex flex-col sm:flex-row justify-between p-6 rounded-xl border border-gray-100 bg-white hover:border-brand-primary/20 transition-colors gap-4">
+                          <div key={order.id} className="flex flex-col sm:flex-row justify-between p-4 md:p-6 rounded-xl border border-gray-100 bg-white hover:border-brand-primary/20 transition-colors gap-4">
                             <div>
                               <div className="flex items-center gap-3 mb-2">
                                 <span className="font-medium text-brand-charcoal">{order.id}</span>
@@ -173,9 +243,9 @@ const Account = () => {
                               </div>
                               <p className="text-sm text-gray-500">{order.date} • {order.items} Items</p>
                             </div>
-                            <div className="text-right">
+                            <div className="flex flex-row sm:flex-col justify-between items-center sm:items-end sm:text-right mt-2 sm:mt-0 border-t sm:border-0 border-gray-50 pt-3 sm:pt-0">
                               <p className="font-bold text-brand-charcoal">₹{order.total.toLocaleString()}</p>
-                              <Button variant="link" className="text-xs h-auto p-0 text-brand-primary mt-1">View Details</Button>
+                              <Button variant="link" className="text-xs h-auto p-0 text-brand-primary mt-0 sm:mt-1">View Details</Button>
                             </div>
                           </div>
                         ))}
@@ -185,49 +255,49 @@ const Account = () => {
                 )}
 
                 {activeTab === 'profile' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div>
                       <h2 className="text-2xl font-serif text-brand-charcoal mb-2">My Profile</h2>
-                      <p className="text-gray-500">Manage your personal information.</p>
+                      <p className="text-sm text-gray-500">Manage your personal information.</p>
                     </div>
 
-                    <div className="p-8 rounded-2xl border border-gray-100 bg-white space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-4 md:p-8 rounded-xl md:rounded-2xl border border-gray-100 bg-white space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-gray-700">Full Name</label>
-                          <Input defaultValue={user?.name || "Ananya Gupta"} className="bg-gray-50" />
+                          <Input defaultValue={user?.name || "Ananya Gupta"} className="bg-gray-50 text-base md:text-sm" />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-gray-700">Email Address</label>
-                          <Input defaultValue={user?.email || "ananya@example.com"} className="bg-gray-50" />
+                          <Input defaultValue={user?.email || "ananya@example.com"} className="bg-gray-50 text-base md:text-sm" />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium text-gray-700">Phone Number</label>
-                          <Input defaultValue="+91 98765 43210" className="bg-gray-50" />
+                          <Input defaultValue="+91 98765 43210" className="bg-gray-50 text-base md:text-sm" />
                         </div>
                       </div>
 
                       <div className="pt-6 border-t border-gray-50 flex gap-4">
-                        <Button className="bg-brand-charcoal text-white hover:bg-black px-8">Save Changes</Button>
-                        <Button variant="outline">Cancel</Button>
+                        <Button className="bg-brand-charcoal text-white hover:bg-black px-8 flex-1 md:flex-none">Save Changes</Button>
+                        <Button variant="outline" className="flex-1 md:flex-none">Cancel</Button>
                       </div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'orders' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div>
                       <h2 className="text-2xl font-serif text-brand-charcoal mb-2">My Orders</h2>
-                      <p className="text-gray-500">View and track your past purchases.</p>
+                      <p className="text-sm text-gray-500">View and track your past purchases.</p>
                     </div>
 
                     {MOCK_ORDERS.length > 0 ? (
                       <div className="space-y-4">
                         {MOCK_ORDERS.map(order => (
-                          <div key={order.id} className="flex flex-col sm:flex-row justify-between p-6 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all gap-6">
+                          <div key={order.id} className="flex flex-col sm:flex-row justify-between p-4 md:p-6 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all gap-4 md:gap-6">
                             <div className="flex-1">
-                              <div className="flex items-center gap-3 mb-2">
+                              <div className="flex items-center justify-between sm:justify-start gap-3 mb-2">
                                 <span className="font-bold text-brand-charcoal">{order.id}</span>
                                 <span className={cn(
                                   "px-2.5 py-0.5 rounded-full text-xs font-medium border",
@@ -252,9 +322,9 @@ const Account = () => {
                                 <span className="text-xs text-gray-500">{order.items} Items</span>
                               </div>
                             </div>
-                            <div className="flex flex-col items-end justify-between min-w-[120px]">
+                            <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-between min-w-[120px] pt-4 sm:pt-0 border-t sm:border-0 border-gray-50 mt-2 sm:mt-0">
                               <p className="font-bold text-lg text-brand-charcoal">₹{order.total.toLocaleString()}</p>
-                              <Button variant="outline" size="sm" className="w-full">View Details</Button>
+                              <Button variant="outline" size="sm" className="w-auto sm:w-full">View Details</Button>
                             </div>
                           </div>
                         ))}
@@ -271,31 +341,31 @@ const Account = () => {
                 )}
 
                 {activeTab === 'wishlist' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div>
                       <h2 className="text-2xl font-serif text-brand-charcoal mb-2">Wishlist</h2>
-                      <p className="text-gray-500">Your curated list of favorites.</p>
+                      <p className="text-sm text-gray-500">Your curated list of favorites.</p>
                     </div>
 
                     <div className="space-y-4">
                       {products.slice(0, 3).map(product => (
                         <div key={product.id} className="flex gap-4 p-4 rounded-xl border border-gray-100 bg-white hover:shadow-sm transition-all group">
-                          <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                          <div className="w-20 h-28 md:w-24 md:h-32 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                             <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           </div>
                           <div className="flex-1 flex flex-col justify-between py-1">
                             <div>
                               <div className="flex justify-between items-start">
-                                <h3 className="font-medium text-brand-charcoal">{product.name}</h3>
-                                <button className="text-gray-400 hover:text-red-500 transition-colors">
+                                <h3 className="font-medium text-brand-charcoal line-clamp-1">{product.name}</h3>
+                                <button className="text-gray-400 hover:text-red-500 transition-colors p-1 -mr-1">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>
-                              <p className="text-sm text-gray-500">{product.category}</p>
+                              <p className="text-xs md:text-sm text-gray-500">{product.category}</p>
                             </div>
-                            <div className="flex justify-between items-center mt-4">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 gap-2 sm:gap-0">
                               <span className="font-semibold text-brand-charcoal">₹{product.price.toLocaleString()}</span>
-                              <Button size="sm" className="bg-brand-charcoal text-white hover:bg-black text-xs h-8">
+                              <Button size="sm" className="bg-brand-charcoal text-white hover:bg-black text-xs h-8 w-full sm:w-auto">
                                 Move to Bag
                               </Button>
                             </div>
@@ -307,26 +377,26 @@ const Account = () => {
                 )}
 
                 {activeTab === 'addresses' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div className="flex justify-between items-end">
                       <div>
                         <h2 className="text-2xl font-serif text-brand-charcoal mb-2">Addresses</h2>
-                        <p className="text-gray-500">Manage your delivery locations.</p>
+                        <p className="text-sm text-gray-500">Manage your delivery locations.</p>
                       </div>
-                      <Button variant="outline" className="gap-2">
-                        <Plus className="w-4 h-4" /> Add New
+                      <Button variant="outline" className="gap-2 text-xs md:text-sm">
+                        <Plus className="w-4 h-4" /> <span className="hidden md:inline">Add New</span><span className="md:hidden">Add</span>
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 gap-4 md:gap-6">
                       {MOCK_ADDRESSES.map(addr => (
-                        <div key={addr.id} className="p-6 rounded-xl border border-gray-100 bg-white hover:border-brand-primary/30 transition-all relative group">
+                        <div key={addr.id} className="p-4 md:p-6 rounded-xl border border-gray-100 bg-white hover:border-brand-primary/30 transition-all relative group">
                           {addr.isDefault && (
-                            <span className="absolute top-6 right-6 px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[10px] font-bold uppercase tracking-wider rounded-full">
+                            <span className="absolute top-4 right-4 md:top-6 md:right-6 px-2 py-0.5 bg-brand-primary/10 text-brand-primary text-[10px] font-bold uppercase tracking-wider rounded-full">
                               Default
                             </span>
                           )}
-                          <div className="flex items-center gap-3 mb-4">
+                          <div className="flex items-center gap-3 mb-3 md:mb-4">
                             <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-600">
                               <MapPin className="w-4 h-4" />
                             </div>
@@ -335,11 +405,11 @@ const Account = () => {
                           
                           <div className="space-y-1 text-sm text-gray-600 pl-11">
                             <p className="font-medium text-gray-900">{addr.name}</p>
-                            <p>{addr.address}</p>
+                            <p className="line-clamp-2">{addr.address}</p>
                             <p className="mt-2 text-gray-500">Phone: {addr.phone}</p>
                           </div>
 
-                          <div className="flex gap-3 pl-11 mt-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-3 pl-11 mt-4 md:mt-6 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <Button variant="link" className="h-auto p-0 text-xs text-brand-primary">Edit</Button>
                             <span className="text-gray-300">|</span>
                             <Button variant="link" className="h-auto p-0 text-xs text-red-600">Delete</Button>
@@ -351,33 +421,48 @@ const Account = () => {
                 )}
 
                 {activeTab === 'settings' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div>
                       <h2 className="text-2xl font-serif text-brand-charcoal mb-2">Account Settings</h2>
-                      <p className="text-gray-500">Update your security and preferences.</p>
+                      <p className="text-sm text-gray-500">Update your security and preferences.</p>
                     </div>
 
-                    <div className="space-y-6">
-                      <div className="p-6 rounded-xl border border-gray-100 bg-white">
-                        <h3 className="font-medium text-brand-charcoal mb-4">Change Password</h3>
+                    <div className="space-y-4 md:space-y-6">
+                      <div className="p-5 md:p-8 rounded-xl md:rounded-2xl border border-gray-100 bg-white">
+                        <h3 className="font-medium text-brand-charcoal mb-6 text-lg">Change Password</h3>
                         <div className="space-y-4 max-w-md">
-                          <Input type="password" placeholder="Current Password" />
-                          <Input type="password" placeholder="New Password" />
-                          <Input type="password" placeholder="Confirm New Password" />
-                          <Button className="bg-brand-charcoal text-white hover:bg-black w-full">Update Password</Button>
+                          <div className="space-y-2">
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Current Password</label>
+                            <Input type="password" placeholder="••••••••" className="bg-gray-50 border-gray-200 focus:bg-white transition-colors text-base md:text-sm" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">New Password</label>
+                            <Input type="password" placeholder="••••••••" className="bg-gray-50 border-gray-200 focus:bg-white transition-colors text-base md:text-sm" />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Confirm Password</label>
+                            <Input type="password" placeholder="••••••••" className="bg-gray-50 border-gray-200 focus:bg-white transition-colors text-base md:text-sm" />
+                          </div>
+                          <div className="pt-2">
+                            <Button className="bg-brand-charcoal text-white hover:bg-black w-full h-12 text-sm tracking-wide">Update Password</Button>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="p-6 rounded-xl border border-gray-100 bg-white">
-                        <h3 className="font-medium text-brand-charcoal mb-4">Preferences</h3>
+                      <div className="p-5 md:p-8 rounded-xl md:rounded-2xl border border-gray-100 bg-white">
+                        <h3 className="font-medium text-brand-charcoal mb-6 text-lg">Preferences</h3>
                         <div className="space-y-4">
-                          <label className="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-brand-charcoal focus:ring-brand-primary" defaultChecked />
-                            <span className="text-sm text-gray-600">Subscribe to newsletter for new arrivals</span>
+                          <label className="flex items-start gap-3 cursor-pointer group">
+                            <div className="relative flex items-center">
+                              <input type="checkbox" className="peer w-5 h-5 rounded border-gray-300 text-brand-charcoal focus:ring-brand-primary cursor-pointer" defaultChecked />
+                            </div>
+                            <span className="text-sm text-gray-600 group-hover:text-brand-charcoal transition-colors pt-0.5">Subscribe to newsletter for new arrivals and exclusive offers</span>
                           </label>
-                          <label className="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-brand-charcoal focus:ring-brand-primary" defaultChecked />
-                            <span className="text-sm text-gray-600">Receive order notifications via WhatsApp</span>
+                          <label className="flex items-start gap-3 cursor-pointer group">
+                             <div className="relative flex items-center">
+                              <input type="checkbox" className="peer w-5 h-5 rounded border-gray-300 text-brand-charcoal focus:ring-brand-primary cursor-pointer" defaultChecked />
+                            </div>
+                            <span className="text-sm text-gray-600 group-hover:text-brand-charcoal transition-colors pt-0.5">Receive order status updates via WhatsApp</span>
                           </label>
                         </div>
                       </div>
@@ -386,13 +471,13 @@ const Account = () => {
                 )}
 
                 {activeTab === 'help' && (
-                  <div className="space-y-8">
+                  <div className="space-y-6 md:space-y-8">
                     <div>
                       <h2 className="text-2xl font-serif text-brand-charcoal mb-2">Help & Support</h2>
-                      <p className="text-gray-500">We are here to assist you.</p>
+                      <p className="text-sm text-gray-500">We are here to assist you.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                       <div className="p-6 rounded-xl border border-gray-100 bg-white text-center hover:shadow-md transition-shadow">
                         <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
                           <HelpCircle className="w-6 h-6" />

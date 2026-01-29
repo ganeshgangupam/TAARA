@@ -143,9 +143,6 @@ const Header = () => {
                         <User className="w-5 h-5 text-brand-charcoal" />
                       </Link>
                    )}
-                   <button onClick={logout} className="p-1">
-                     <LogOut className="w-5 h-5 text-gray-600" />
-                   </button>
                  </div>
                )}
             </div>
