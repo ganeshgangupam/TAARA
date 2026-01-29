@@ -32,12 +32,16 @@ const Home = () => {
               Experience the art of fashion with our premium selection.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
-              <Button size="lg" className="bg-brand-charcoal hover:bg-black text-white px-10 h-14 text-base rounded-full shadow-lg hover:shadow-xl transition-all">
-                Explore Collection
-              </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-base rounded-full border-gray-300 hover:border-brand-charcoal group">
-                Shop New Arrivals <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <Link to="/collections">
+                <Button size="lg" className="bg-brand-charcoal hover:bg-black text-white px-10 h-14 text-base rounded-full shadow-lg hover:shadow-xl transition-all">
+                  Explore Collection
+                </Button>
+              </Link>
+              <Link to="/collections">
+                <Button size="lg" variant="outline" className="h-14 px-8 text-base rounded-full border-gray-300 hover:border-brand-charcoal group">
+                  Shop New Arrivals <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </motion.div>
 

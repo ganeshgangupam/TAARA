@@ -1,7 +1,8 @@
 import React from 'react';
-import { LayoutDashboard, Package, ShoppingBag, Users, LogOut, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Users, LogOut, ChevronLeft, ChevronRight, Star, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const AdminSidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, handleLogout }) => {
   const tabs = [
@@ -89,10 +90,19 @@ const AdminSidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed, ha
           </button>
         ) : null}
         
+        <Link to="/" className={cn(
+            "w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 transition-colors",
+            isCollapsed && "justify-center"
+          )}
+          title={isCollapsed ? "Public Website" : undefined}>
+          <ExternalLink className="w-5 h-5 flex-shrink-0" />
+          {!isCollapsed && <span>Public Website</span>}
+        </Link>
+
         <button 
           onClick={handleLogout}
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors",
+            "w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 transition-colors mt-2",
             isCollapsed && "justify-center"
           )}
           title={isCollapsed ? "Sign Out" : undefined}
