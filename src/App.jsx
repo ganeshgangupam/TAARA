@@ -12,11 +12,13 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import Wishlist from '@/pages/Wishlist';
+import Account from '@/pages/Account';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import Terms from '@/pages/Terms';
 import ReturnPolicy from '@/pages/ReturnPolicy';
 import { Toaster } from 'sonner';
 import ScrollToTop from '@/components/ScrollToTop';
+import NewArrivals from '@/pages/NewArrivals';
 
 const CustomerLayout = () => {
   return (
@@ -44,6 +46,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/new-arrivals" element={<NewArrivals />} />
+          <Route path="/account" element={<Account />} />
         </Route>
 
         {/* Admin Routes */}

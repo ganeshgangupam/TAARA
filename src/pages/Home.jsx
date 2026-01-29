@@ -37,7 +37,7 @@ const Home = () => {
                   Explore Collection
                 </Button>
               </Link>
-              <Link to="/collections">
+              <Link to="/new-arrivals">
                 <Button size="lg" variant="outline" className="h-14 px-8 text-base rounded-full border-gray-300 hover:border-brand-charcoal group">
                   Shop New Arrivals <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>

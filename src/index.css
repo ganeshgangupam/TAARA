@@ -15,3 +15,13 @@ body {
   color: var(--color-brand-charcoal);
   -webkit-font-smoothing: antialiased;
 }
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -60,7 +60,7 @@ const Header = () => {
           {/* Navigation Tabs */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-brand-charcoal/80">
             <Link to="/explore" className="hover:text-brand-primary transition-colors">Explore</Link>
-            <Link to="/collections" className="hover:text-brand-primary transition-colors">Collections</Link>
+            <Link to="/new-arrivals" className="hover:text-brand-primary transition-colors">New Arrivals</Link>
             <Link to="/about" className="hover:text-brand-primary transition-colors">About</Link>
             <Link to="/contact" className="hover:text-brand-primary transition-colors">Contact</Link>
           </nav>
@@ -82,10 +82,10 @@ const Header = () => {
                 </>
               ) : (
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-sm font-medium text-brand-charcoal">
+                  <Link to={user?.role === 'admin' ? '/admin/dashboard' : '/account'} className="flex items-center gap-2 text-sm font-medium text-brand-charcoal hover:text-brand-primary transition-colors">
                     <User className="w-4 h-4" />
                     <span>{user?.role === 'admin' ? 'Admin' : 'My Account'}</span>
-                  </div>
+                  </Link>
                   
                   {user?.role === 'admin' && (
                     <Link to="/admin/dashboard">
@@ -134,16 +134,18 @@ const Header = () => {
                  </button>
                ) : (
                  <div className="flex items-center gap-2">
-                   {user?.role === 'admin' && (
+                   {user?.role === 'admin' ? (
                       <Link to="/admin/dashboard" className="p-1">
                         <User className="w-5 h-5 text-brand-primary" />
                       </Link>
+                   ) : (
+                      <Link to="/account" className="p-1">
+                        <User className="w-5 h-5 text-brand-charcoal" />
+                      </Link>
                    )}
-                   {user?.role !== 'admin' && (
-                      <button onClick={logout} className="p-1">
-                        <LogOut className="w-5 h-5 text-gray-600" />
-                      </button>
-                   )}
+                   <button onClick={logout} className="p-1">
+                     <LogOut className="w-5 h-5 text-gray-600" />
+                   </button>
                  </div>
                )}
             </div>
