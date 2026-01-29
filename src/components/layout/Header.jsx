@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, Search, ShoppingBag, Heart, User, LogOut, Repeat } from 'lucide-react';
+import { Star, Search, ShoppingBag, Heart, User, LogOut, Repeat, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import LoginModal from '@/components/auth/LoginModal';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
   const navigate = useNavigate();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const cart = useCartStore((state) => state.cart);
   const { user, isAuthenticated, logout, login } = useAuthStore();
   
@@ -118,7 +120,32 @@ const Header = () => {
             
             {/* Mobile Icons */}
             <div className="flex md:hidden items-center gap-3">
-               <Search className="w-5 h-5 text-gray-600" />
+               <button onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)} className="p-1">
+                 {isMobileSearchOpen ? (
+                   <X className="w-5 h-5 text-gray-600" />
+                 ) : (
+                   <Search className="w-5 h-5 text-gray-600" />
+                 )}
+               </button>
+               
+               {!isAuthenticated ? (
+                 <button onClick={() => setIsLoginModalOpen(true)} className="p-1">
+                   <User className="w-5 h-5 text-gray-600" />
+                 </button>
+               ) : (
+                 <div className="flex items-center gap-2">
+                   {user?.role === 'admin' && (
+                      <Link to="/admin/dashboard" className="p-1">
+                        <User className="w-5 h-5 text-brand-primary" />
+                      </Link>
+                   )}
+                   {user?.role !== 'admin' && (
+                      <button onClick={logout} className="p-1">
+                        <LogOut className="w-5 h-5 text-gray-600" />
+                      </button>
+                   )}
+                 </div>
+               )}
             </div>
 
             <Link to="/wishlist" className="relative p-2 hover:bg-gray-50 rounded-full transition-colors">
@@ -135,6 +162,31 @@ const Header = () => {
           </div>
         </div>
       </header>
+
+      {/* Mobile Search Bar Animation */}
+      <AnimatePresence>
+        {isMobileSearchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden bg-white border-b border-gray-100 overflow-hidden shadow-sm"
+          >
+            <div className="p-4 container mx-auto">
+              <div className="relative">
+                <Input 
+                  type="text" 
+                  placeholder="Search for luxury items..." 
+                  className="pl-10 pr-4 py-6 bg-gray-50 border-transparent focus:bg-white focus:border-brand-primary/20 transition-all duration-300 w-full text-base rounded-xl"
+                  autoFocus
+                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <LoginModal 
         isOpen={isLoginModalOpen} 

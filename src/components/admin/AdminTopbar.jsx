@@ -1,15 +1,19 @@
 import React from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Search, Bell, User, Menu } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
-const AdminTopbar = ({ title, isCollapsed }) => {
+const AdminTopbar = ({ title, isCollapsed, onMenuClick }) => {
   return (
     <header 
-      className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 sticky top-0 z-10 transition-all duration-300"
+      className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-6 sticky top-0 z-10 transition-all duration-300"
     >
       <div className="flex items-center gap-4">
-        <h2 className="text-xl font-bold text-gray-800 capitalize hidden sm:block">{title}</h2>
+        <Button variant="ghost" size="icon" className="md:hidden -ml-2" onClick={onMenuClick}>
+          <Menu className="w-5 h-5" />
+        </Button>
+        <span className="md:hidden font-bold text-lg text-brand-charcoal">TAARA ADMIN</span>
+        <h2 className="text-xl font-bold text-gray-800 capitalize hidden md:block">{title}</h2>
       </div>
 
       <div className="flex items-center gap-6 flex-1 justify-end max-w-2xl">
