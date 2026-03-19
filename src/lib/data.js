@@ -4,7 +4,7 @@ export const products = [
     name: "The Royal Silk Gown",
     price: 12999,
     category: "Dresses",
-    image: "https://www.neetalulla.com/cdn/shop/files/Neeta-mam-day-1_1040-copy.jpg?v=1760291684&width=1800",
+    image: "https://www.neetalulla.com/cdn/shop/files/Vanya-NSL-FASHION-PVT-LTD-32573192405170.jpg?v=1771443742&width=1800",
     colors: ["Red", "Black"],
     sizes: ["S", "M", "L"],
     description: "Elegant silk gown with a royal finish, perfect for evening galas.",
