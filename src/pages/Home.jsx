@@ -57,7 +57,7 @@ const Home = () => {
             <div className="relative w-full h-full overflow-hidden rounded-t-[10rem] rounded-b-lg shadow-2xl">
               <div className="absolute inset-0 bg-brand-champagne/10 mix-blend-multiply z-10 pointer-events-none" />
               <img 
-                src="https://www.neetalulla.com/cdn/shop/files/851-Neeta-Lulla-Fashion-Show.jpg?v=1747123995&width=1800" 
+                src="https://www.neetalulla.com/cdn/shop/files/Nina-Hot-Pink-Nude-Corset-Cocktail-Skirt-Set-NSL-FASHION-PVT-LTD-33650245468338.jpg?v=1771443655&width=1800" 
                 alt="Luxury Fashion Model" 
                 className="object-cover w-full h-full hover:scale-105 transition-transform duration-[2s] ease-out"
               />
